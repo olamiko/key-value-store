@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/gob"
 	"errors"
-	"log"
 	"os"
 )
 
@@ -28,23 +27,27 @@ func (s Store) Get(key string) string {
 	return res
 }
 
-func (s *Store) Set(key string, value string) {
+func (s *Store) Set(key string, value string) error {
 	s.data[key] = value
 
-	s.Flush()
+	err := s.Flush()
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
-func (s *Store) Load() {
+func (s *Store) Load() error {
 
 	// Deal with this later... open file properly
 	if _, err := os.Stat(s.Filename); errors.Is(err, os.ErrNotExist) {
 		s.data = make(map[string]string)
-		return
+		return nil
 	}
 
 	rawData, err := os.ReadFile(s.Filename)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	buffer := bytes.NewBuffer(rawData)
@@ -52,26 +55,27 @@ func (s *Store) Load() {
 	decoder := gob.NewDecoder(buffer)
 	err = decoder.Decode(&s.data)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
+	return nil
 }
 
-func (s Store) Flush() {
+func (s Store) Flush() error {
 	buffer := new(bytes.Buffer)
 
 	encoder := gob.NewEncoder(buffer)
 
 	err := encoder.Encode(s.data)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	f, err := os.Create(s.Filename)
 	if err != nil {
-		log.Fatal(err)
+		return err
 	}
 
 	buffer.WriteTo(f)
-
+	return nil
 }
