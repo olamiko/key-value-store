@@ -60,7 +60,7 @@ func runClient() {
 	scanner := bufio.NewScanner(os.Stdin)
 	fmt.Print("> Welcome to the kv store interface \n")
 	fmt.Print("> Allowed operations are: \n")
-	fmt.Print("> set foo=bar \n")
+	fmt.Print("> set foo=bar (no spaces between key=value!) \n")
 	fmt.Print("> get foo \n")
 	fmt.Println(" ")
 
