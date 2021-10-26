@@ -4,41 +4,51 @@ import (
 	"github.com/olamiko/key-value-store/utils"
 	"log"
 	"net"
-	"net/http"
+	//	"net/http"
 	"net/rpc"
 )
 
 type Listener int
 
 type Reply struct {
-	response string
+	Response string
 }
 
 var store utils.Store = utils.NewStore("storage.kv")
 
-func (l *Listener) getListener(key string, reply *Reply) error {
+func (l *Listener) GetListener(key string, reply *Reply) error {
 	*reply = Reply{store.Get(key)}
 	return nil
 }
 
-func (l *Listener) setListener(key_val []string, reply *Reply) error {
+func (l *Listener) SetListener(key_val []string, reply *Reply) error {
 	key := key_val[0]
 	value := key_val[1]
-	*reply = Reply{store.Set(key, value)}
+	store.Set(key, value)
+	*reply = Reply{"Added key successfully"}
 	return nil
 }
 
 func startServer() {
+	addy, err := net.ResolveTCPAddr("tcp", "0.0.0.0:30800")
+	if err != nil {
+		log.Fatal(err)
+	}
+	inbound, err := net.ListenTCP("tcp", addy)
+	if err != nil {
+		log.Fatal(err)
+	}
 	listener := new(Listener)
 	rpc.Register(listener)
-	rpc.HandleHTTP()
+	//rpc.HandleHTTP()
+	rpc.Accept(inbound)
 
-	l, err := net.Listen("tcp", "30800")
-	if err != nil {
-		log.Fatal("listen error: ", err)
-	}
+	//l, err := net.Listen("tcp", ":30800")
+	//if err != nil {
+	//	log.Fatal("listen error: ", err)
+	//}
 
-	go http.Serve(l, nil)
+	//go http.Serve(l, nil)
 }
 
 func main() {
