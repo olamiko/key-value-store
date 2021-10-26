@@ -3,13 +3,21 @@ package utils
 import (
 	"bytes"
 	"encoding/gob"
+	"errors"
 	"log"
 	"os"
 )
 
 type Store struct {
 	data     map[string]string
-	filename string
+	Filename string
+}
+
+func NewStore(filename string) Store {
+	newStore := Store{Filename: filename}
+	newStore.Load()
+	return newStore
+	//return &Store{data: make(map[string]string), Filename: filename}
 }
 
 func (s Store) Get(key string) string {
@@ -23,12 +31,18 @@ func (s Store) Get(key string) string {
 func (s *Store) Set(key string, value string) {
 	s.data[key] = value
 
-	s.flush()
+	s.Flush()
 }
 
 func (s *Store) Load() {
 
-	rawData, err := os.ReadFile(s.filename)
+	// Deal with this later... open file properly
+	if _, err := os.Stat(s.Filename); errors.Is(err, os.ErrNotExist) {
+		s.data = make(map[string]string)
+		return
+	}
+
+	rawData, err := os.ReadFile(s.Filename)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -53,7 +67,7 @@ func (s Store) Flush() {
 		log.Fatal(err)
 	}
 
-	f, err := os.Create(s.filename)
+	f, err := os.Create(s.Filename)
 	if err != nil {
 		log.Fatal(err)
 	}
