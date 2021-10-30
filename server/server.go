@@ -6,6 +6,7 @@ import (
 	"net"
 	//	"net/http"
 	"net/rpc"
+	//"strconv"
 )
 
 type Listener int
@@ -14,7 +15,7 @@ type Reply struct {
 	Response string
 }
 
-var store utils.Store = utils.NewStore("storage.kv")
+var store utils.Store // = utils.NewStore("storage.kv")
 
 func (l *Listener) GetListener(key string, reply *Reply) error {
 	*reply = Reply{store.Get(key)}
@@ -29,8 +30,11 @@ func (l *Listener) SetListener(key_val []string, reply *Reply) error {
 	return nil
 }
 
-func startServer() {
-	addy, err := net.ResolveTCPAddr("tcp", "0.0.0.0:30800")
+func StartServer(id string, storage string) {
+
+	store = utils.NewStore(storage)
+
+	addy, err := net.ResolveTCPAddr("tcp", "0.0.0.0:3080"+id)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -51,6 +55,6 @@ func startServer() {
 	//go http.Serve(l, nil)
 }
 
-func main() {
-	startServer()
-}
+//func main() {
+//	startServer()
+//}

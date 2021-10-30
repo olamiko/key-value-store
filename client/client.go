@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"github.com/olamiko/key-value-store/server"
 	"log"
 	"net/rpc"
 	"os"
@@ -54,6 +55,27 @@ func parseInput(input string) string {
 
 }
 
+func callServer() {
+
+	fmt.Println("> How many servers do you wish to run? ")
+
+	scanner.Scan()
+	replicas := scanner.Text()
+	if scanner.Err() != nil {
+		fmt.Println("> " + scanner.Err().Error()) // Handle error.
+	}
+	replicas, err = strconv.Atoi(replicas)
+	if err != nil {
+		fmt.Println("> Please input a number: " + err.Error())
+	}
+
+	for replicas > 0 {
+		stringId := strconv.Itoa(replicas)
+		server.StartServer(stringId, "storage-"+stringId+".kv")
+	}
+
+}
+
 func runClient() {
 
 	//REPL
@@ -63,6 +85,8 @@ func runClient() {
 	fmt.Print("> set foo=bar (no spaces between key=value!) \n")
 	fmt.Print("> get foo \n")
 	fmt.Println(" ")
+
+	callServer()
 
 	for {
 		fmt.Print("> ")
