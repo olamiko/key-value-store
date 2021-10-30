@@ -7,8 +7,11 @@ import (
 	"log"
 	"net/rpc"
 	"os"
+	"strconv"
 	"strings"
 )
+
+var scanner = bufio.NewScanner(os.Stdin)
 
 type Reply struct {
 	Response string
@@ -61,17 +64,21 @@ func callServer() {
 
 	scanner.Scan()
 	replicas := scanner.Text()
+
 	if scanner.Err() != nil {
 		fmt.Println("> " + scanner.Err().Error()) // Handle error.
 	}
-	replicas, err = strconv.Atoi(replicas)
+
+	total, err := strconv.Atoi(replicas)
+
 	if err != nil {
 		fmt.Println("> Please input a number: " + err.Error())
 	}
 
-	for replicas > 0 {
-		stringId := strconv.Itoa(replicas)
+	for total > 0 {
+		stringId := strconv.Itoa(total)
 		server.StartServer(stringId, "storage-"+stringId+".kv")
+		total = total - 1
 	}
 
 }

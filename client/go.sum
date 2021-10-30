@@ -1,0 +1,4 @@
+github.com/olamiko/key-value-store/server v0.0.0-20211030015914-3b748693c3f0 h1:SA09GrKw5PeJF90SCI3vmyUfAcRpGOuWtB/gEbnenLE=
+github.com/olamiko/key-value-store/server v0.0.0-20211030015914-3b748693c3f0/go.mod h1:HofKzynsOiSZLBOF18kuVK70GBS9xCIeVwHu8wf26EI=
+github.com/olamiko/key-value-store/utils v0.0.0-20211026060928-0887ace2f05b h1:TnxAGR9ySAuPzJq2pAPNsCRoGdZdloym6AauUp6WJrE=
+github.com/olamiko/key-value-store/utils v0.0.0-20211026060928-0887ace2f05b/go.mod h1:sZjPY/vqrlaIdZm3Wan+YsmbuamO5nV7Dy3Q3aOjM1Y=
