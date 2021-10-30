@@ -1,4 +1,4 @@
-package main
+package server
 
 import (
 	"github.com/olamiko/key-value-store/utils"
