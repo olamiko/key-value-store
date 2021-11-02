@@ -58,32 +58,6 @@ func parseInput(input string) string {
 
 }
 
-func callServer() {
-
-	fmt.Println("> How many servers do you wish to run? ")
-
-	fmt.Print("> ")
-	scanner.Scan()
-	replicas := scanner.Text()
-
-	if scanner.Err() != nil {
-		fmt.Println("> " + scanner.Err().Error()) // Handle error.
-	}
-
-	total, err := strconv.Atoi(replicas)
-
-	if err != nil {
-		fmt.Println("> Please input a number: " + err.Error())
-	}
-
-	for total > 0 {
-		stringId := strconv.Itoa(total)
-		loadbalancer.StartServer(stringId, "storage-"+stringId+".kv")
-		total = total - 1
-	}
-
-}
-
 func runClient() {
 
 	//REPL
@@ -93,8 +67,6 @@ func runClient() {
 	fmt.Print("> set foo=bar (no spaces between key=value!) \n")
 	fmt.Print("> get foo \n")
 	fmt.Println(" ")
-
-	//	callServer()
 
 	for {
 		fmt.Print("> ")

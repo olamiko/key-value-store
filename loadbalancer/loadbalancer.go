@@ -5,7 +5,12 @@ import (
 	"log"
 	"net"
 	"net/rpc"
+	"strconv"
 )
+
+var replicaSlice []string
+
+var quit chan struct{}
 
 type Listener int
 
@@ -28,15 +33,24 @@ func (l *Listener) SetListener(key_val []string, reply *Reply) error {
 	return nil
 }
 
-func StartServer(id string, storage string) {
+func getIpAddress(id int) string {
+	if id < 10 {
+		return "0.0.0.0:3080" + strconv.Itoa(id)
+	} else {
+		return "0.0.0.0:308" + strconv.Itoa(id)
+	}
+}
+
+func startServer(id int, storage string) {
 
 	store = utils.NewStore(storage)
+	ipAddress := getIpAddress(id)
 
-	addy, err := net.ResolveTCPAddr("tcp", "0.0.0.0:3080"+id)
+	address, err := net.ResolveTCPAddr("tcp", ipAddress)
 	if err != nil {
 		log.Fatal(err)
 	}
-	inbound, err := net.ListenTCP("tcp", addy)
+	inbound, err := net.ListenTCP("tcp", address)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -44,4 +58,27 @@ func StartServer(id string, storage string) {
 	rpc.Register(listener)
 	rpc.Accept(inbound)
 
+}
+
+func StartServers(replicas int) {
+	id := replicas
+
+	quit := make(chan struct{})
+
+	for id > 0 {
+		storage := "storage-" + strconv.Itoa(id) + ".kv"
+
+		go func() {
+			for {
+				select {
+				case <-quit:
+					return
+				default:
+					startServer(id, storage)
+				}
+			}
+		}()
+		replicaSlice = append(replicaSlice, getIpAddress(id))
+		id = -1
+	}
 }
