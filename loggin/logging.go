@@ -22,7 +22,7 @@ func WriteCommitLog(key string, value string) {
 	}
 	defer f.Close()
 
-	preparedInput := fmt.Sprintf("%d SET %s %s", increasingStamp, key, value)
+	preparedInput := fmt.Sprintf("%d SET %s %s\n", increasingStamp, key, value)
 	if _, err := f.WriteString(preparedInput); err != nil {
 		log.Fatal("commit log: " + err.Error())
 	}
@@ -33,14 +33,24 @@ func RotateLog() {
 	os.Remove(COMMITLOG)
 }
 
-func ReadCommitLog() *bufio.Scanner {
+func ReadCommitLog() []string {
+
+	commitSlice := make([]string, 0)
+
 	f, err := os.Open(COMMITLOG)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer f.Close()
 
-	return bufio.NewScanner(f)
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		commitSlice = append(commitSlice, scanner.Text())
+	}
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+	return commitSlice
 	//	for scanner.Scan() {
 	//		fmt.Println(scanner.Text())
 	//	}

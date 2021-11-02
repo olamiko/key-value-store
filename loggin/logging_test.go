@@ -1,10 +1,11 @@
-package utils_test
+package loggin_test
 
 import (
 	"github.com/olamiko/key-value-store/loggin"
-	"os"
 	"testing"
 )
+
+var commitSlice []string
 
 func TestWriteAndReadCommitLog(t *testing.T) {
 
@@ -29,13 +30,17 @@ func TestWriteAndReadCommitLog(t *testing.T) {
 		})
 	}
 
-	scanner := loggin.ReadCommitLog()
 	for _, tc := range cases {
 		t.Run(tc.name, func(t *testing.T) {
-			scanner.Scan()
+			commitSlice = loggin.ReadCommitLog()
+		})
+	}
 
-			if tc.result != scanner.Text() {
-				t.Fatalf("expected value %v, but got %v", tc.result, scanner.Text())
+	for i, tc := range cases {
+		t.Run(tc.name, func(t *testing.T) {
+			commitLine := commitSlice[i]
+			if tc.result != commitLine {
+				t.Fatalf("expected value %v, but got %v", tc.result, commitLine)
 			}
 
 		})
