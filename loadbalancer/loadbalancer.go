@@ -1,4 +1,4 @@
-package server
+package loadbalancer
 
 import (
 	"github.com/olamiko/key-value-store/utils"

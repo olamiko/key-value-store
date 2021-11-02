@@ -1,4 +1,4 @@
-module github.com/olamiko/key-value-store/server
+module github.com/olamiko/key-value-store/loadbalancer
 
 go 1.16
 

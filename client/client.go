@@ -3,7 +3,7 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/olamiko/key-value-store/server"
+	"github.com/olamiko/key-value-store/loadbalancer"
 	"log"
 	"net/rpc"
 	"os"
@@ -78,7 +78,7 @@ func callServer() {
 
 	for total > 0 {
 		stringId := strconv.Itoa(total)
-		server.StartServer(stringId, "storage-"+stringId+".kv")
+		loadbalancer.StartServer(stringId, "storage-"+stringId+".kv")
 		total = total - 1
 	}
 
@@ -94,7 +94,7 @@ func runClient() {
 	fmt.Print("> get foo \n")
 	fmt.Println(" ")
 
-	callServer()
+	//	callServer()
 
 	for {
 		fmt.Print("> ")
