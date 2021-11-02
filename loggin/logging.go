@@ -1,4 +1,4 @@
-package logging
+package loggin
 
 import (
 	"bufio"
@@ -7,30 +7,33 @@ import (
 	"os"
 )
 
+var increasingStamp int = 1
+
 var COMMITLOG string = "commitlog.lg"
 
-func setCommitLog(filename string) {
+func SetCommitLog(filename string) {
 	COMMITLOG = filename
 }
 
-func writeToCommitLog(key string, value string) {
+func WriteCommitLog(key string, value string) {
 	f, err := os.OpenFile(COMMITLOG, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal("commit log: " + err.Error())
 	}
 	defer f.Close()
 
-	preparedInput := fmt.Sprintf("SET %s %s", key, value)
+	preparedInput := fmt.Sprintf("%d SET %s %s", increasingStamp, key, value)
 	if _, err := f.WriteString(preparedInput); err != nil {
 		log.Fatal("commit log: " + err.Error())
 	}
+	increasingStamp = increasingStamp + 1
 }
 
-func rotateLog() {
+func RotateLog() {
 	os.Remove(COMMITLOG)
 }
 
-func readCommitLog() *bufio.Scanner {
+func ReadCommitLog() *bufio.Scanner {
 	f, err := os.Open(COMMITLOG)
 	if err != nil {
 		log.Fatal(err)

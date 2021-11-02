@@ -62,6 +62,7 @@ func callServer() {
 
 	fmt.Println("> How many servers do you wish to run? ")
 
+	fmt.Print("> ")
 	scanner.Scan()
 	replicas := scanner.Text()
 

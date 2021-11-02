@@ -4,9 +4,7 @@ import (
 	"github.com/olamiko/key-value-store/utils"
 	"log"
 	"net"
-	//	"net/http"
 	"net/rpc"
-	//"strconv"
 )
 
 type Listener int
@@ -44,17 +42,6 @@ func StartServer(id string, storage string) {
 	}
 	listener := new(Listener)
 	rpc.Register(listener)
-	//rpc.HandleHTTP()
 	rpc.Accept(inbound)
 
-	//l, err := net.Listen("tcp", ":30800")
-	//if err != nil {
-	//	log.Fatal("listen error: ", err)
-	//}
-
-	//go http.Serve(l, nil)
 }
-
-//func main() {
-//	startServer()
-//}
