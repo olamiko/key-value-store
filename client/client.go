@@ -3,59 +3,42 @@ package main
 import (
 	"bufio"
 	"fmt"
-	"github.com/olamiko/key-value-store/loadbalancer"
+	//"github.com/olamiko/key-value-store/loadbalancer"
+	//	"io/ioutil"
 	"log"
-	"net/rpc"
+	"net"
 	"os"
-	"strconv"
-	"strings"
+	//"strconv"
+	//"strings"
 )
 
 var scanner = bufio.NewScanner(os.Stdin)
 
-type Reply struct {
-	Response string
-}
+var lbPort string = ":30000"
 
-var serverAddress string = "0.0.0.0"
+func clientConn(input string) string {
+	tcpAddr, err := net.ResolveTCPAddr("tcp", lbPort)
 
-func parseInput(input string) string {
-
-	var reply Reply
-	client, err := rpc.Dial("tcp", serverAddress+":30800")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	splitSlice := strings.Split(input, " ")
-	if len(splitSlice) > 1 {
-		command := splitSlice[0]
-		request := splitSlice[1]
+	conn, err := net.DialTCP("tcp", nil, tcpAddr)
 
-		if strings.EqualFold(command, "get") {
-
-			err = client.Call("Listener.GetListener", request, &reply)
-			if err != nil {
-				log.Fatal(err)
-			}
-		} else if strings.EqualFold(command, "set") {
-			key_val := strings.Split(request, "=")
-			if len(key_val) < 2 {
-				return "set: incorrect input"
-			}
-			err = client.Call("Listener.SetListener", key_val, &reply)
-			if err != nil {
-				log.Fatal(err)
-			}
-		} else {
-			return "Unknown command, try again."
-		}
-
-		return reply.Response
+	if err != nil {
+		log.Fatal(err)
 	}
 
-	return "Incorrect command"
+	_, err = conn.Write([]byte(input))
 
+	buffer := make([]byte, 1024)
+	_, err = conn.Read(buffer)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return string(buffer)
 }
 
 func runClient() {
@@ -75,7 +58,7 @@ func runClient() {
 			fmt.Println("> " + scanner.Err().Error()) // Handle error.
 		}
 
-		response := parseInput(scanner.Text())
+		response := clientConn(scanner.Text())
 		fmt.Print("> " + response + "\n")
 	}
 
