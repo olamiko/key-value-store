@@ -13,30 +13,29 @@ import (
 // data byte - as much as needed
 // end byte - a byte
 
-type myEncoding struct {
-	start   uint8
-	command uint8
-	size    uint32
-	data    []string
-	end     uint8
+type MyEncoding struct {
+	Start   uint8
+	Command uint8
+	Data    [1]string
+	End     uint8
 }
 
-func encode(toEncode myEncoding) ([]bytes, err) {
+func Encode(toEncode MyEncoding) ([]byte, error) {
 	buf := new(bytes.Buffer)
-	err := binary.Write(buf, binary.BigEndian, toEncode)
+	err := binary.Write(buf, binary.BigEndian, &toEncode)
 	if err != nil {
 		return nil, err
 	}
 	return buf.Bytes(), nil
 }
 
-func decode(byteData []bytes) (myEncoding, error) {
-	var decodedData myEncoding
+func Decode(byteData []byte) (*MyEncoding, error) {
+	var decodedData MyEncoding
 	buf := bytes.NewReader(byteData)
 	err := binary.Read(buf, binary.BigEndian, &decodedData)
 	if err != nil {
 		return nil, err
 	}
-	return decodedData, nil
+	return &decodedData, nil
 
 }
