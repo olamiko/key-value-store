@@ -7,14 +7,22 @@ import (
 
 func TestEncodeAndDecode(t *testing.T) {
 
-	data := encodingUtils.MyEncoding{uint8(10), uint8(1), [1]string{"foo=bar"}, uint8(01)}
+	sentPayload := [10]byte{}
+	data := encodingUtils.MyEncoding{uint8(10), uint8(1), sentPayload}
 
-	encoding, _ := encodingUtils.Encode(data)
+	encoding, err := encodingUtils.Encode(data)
+
+	if err != nil {
+		t.Fatalf("encoding err %v", err)
+	}
 
 	decodedData, err := encodingUtils.Decode(encoding)
-	t.Fatalf("err %v", err)
-	//if derefencedData != data {
-	t.Fatalf("expected value %v, but got %v", data, decodedData)
-	//}
+	if err != nil {
+		t.Fatalf("decoding err %v", err)
+	}
+
+	if decodedData.Data != data.Data {
+		t.Fatalf("expected value %v, but got %v", data, decodedData)
+	}
 
 }
